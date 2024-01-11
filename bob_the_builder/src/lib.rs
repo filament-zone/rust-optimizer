@@ -63,41 +63,32 @@ pub fn build_workspace(workspace_members: &[String]) {
 
     for contract in contract_packages {
         println!("Building {:?} ...", contract);
-
-        let mut child = Command::new(CARGO_PATH)
-            .args(&[
-                "build",
-                "--target-dir=/target",
-                "--release",
-                "--lib",
-                "--target=wasm32-unknown-unknown",
-                "--locked",
-            ])
-            .env("RUSTFLAGS", "-C link-arg=-s")
-            .current_dir(canonicalize(contract).unwrap())
-            .spawn()
-            .unwrap();
-        let error_code = child.wait().unwrap();
-        assert!(error_code.success());
+        build_cmd(contract);
     }
 }
 
 fn build_single() {
-    let project_path = PathBuf::from(".");
+    build_cmd(&PathBuf::from("."));
+}
 
+fn build_cmd(dir: &PathBuf) {
     // Linker flag "-s" for stripping (https://github.com/rust-lang/cargo/issues/3483#issuecomment-431209957)
     // Note that shortcuts from .cargo/config are not available in source code packages from crates.io
     let mut child = Command::new(CARGO_PATH)
         .args(&[
-            "build",
+            "rustc",
             "--target-dir=/target",
             "--release",
             "--lib",
             "--target=wasm32-unknown-unknown",
             "--locked",
+            "--crate-type",
+            "cdylib,rlib",
+            "--manifest-path",
+            "Cargo.toml",
         ])
         .env("RUSTFLAGS", "-C link-arg=-s")
-        .current_dir(canonicalize(project_path).unwrap())
+        .current_dir(canonicalize(dir).unwrap())
         .spawn()
         .unwrap();
     let error_code = child.wait().unwrap();

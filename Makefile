@@ -1,8 +1,9 @@
 # Docker names (DN) for the images
-DN_OPTIMIZER := "cosmwasm/optimizer"
-DN_RUST_OPTIMIZER := "cosmwasm/rust-optimizer"
-DN_WORKSPACE_OPTIMIZER := "cosmwasm/workspace-optimizer"
-DOCKER_TAG := 0.15.0
+DN_OPTIMIZER := "filament-zone/optimizer"
+DN_RUST_OPTIMIZER := "filament-zone/rust-optimizer"
+DN_WORKSPACE_OPTIMIZER := "filament-zone/workspace-optimizer"
+HASH := $(shell git rev-parse --short HEAD)
+DOCKER_TAG := "0.16.0-$(HASH)"
 
 # Native arch
 BUILDARCH := $(shell uname -m)
